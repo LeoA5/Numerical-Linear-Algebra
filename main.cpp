@@ -23,7 +23,7 @@ int main()
         {4,5,6}
     };
 
-    vector<vector<int>> AB = matrix_multiply(A)(B);
+    vector<vector<int>> AB = generate_nxn_identity(2);
 
     vector<int> A_one = get_matrix_column(A)(1);
     size_t A_size = A_one.size();

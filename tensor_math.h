@@ -15,7 +15,9 @@ std::vector<T> operator+(const std::vector<T>& v, const std::vector<T>& w)
 }
 
 template<typename T>
-std::function<T (const std::vector<T>&)> dot_product(const std::vector<T>& left)
+std::function<T (const std::vector<T>&)> dot_product(
+    const std::vector<T>& left
+)
 {
     if (!std::is_arithmetic_v<T>)
     {
@@ -31,7 +33,8 @@ std::function<T (const std::vector<T>&)> dot_product(const std::vector<T>& left)
         {
             throw std::length_error("Vectors are 0-dimensional.");
         }
-        std::function<T (int)> dot_from_index = [&left, &right, &dot_from_index] (size_t n) -> T
+        std::function<T (int)> dot_from_index = 
+        [&left, &right, &dot_from_index] (size_t n) -> T
         {
             if (n == left.size()) { return 0; }
             return left[n] * right[n] + dot_from_index(n + 1);
@@ -41,34 +44,44 @@ std::function<T (const std::vector<T>&)> dot_product(const std::vector<T>& left)
 }
 
 template <typename T>
-std::function<std::vector<T> (size_t)> get_matrix_row(const std::vector<std::vector<T>>& matrix)
+std::function<std::vector<T> (size_t)> get_matrix_row(
+    const std::vector<std::vector<T>>& matrix
+)
 {
     return [&matrix] (size_t row) -> std::vector<T>
     {
         if (row >= matrix.size())
         {
-            throw std::invalid_argument("Row index is larger than the number of rows.");
+            throw std::invalid_argument(
+                "Row index is larger than the number of rows."
+            );
         }
         return matrix[row];
     };
 }
 
 template <typename T>
-std::function<std::vector<T> (size_t)> get_matrix_column(const std::vector<std::vector<T>>& matrix)
+std::function<std::vector<T> (size_t)> get_matrix_column(
+    const std::vector<std::vector<T>>& matrix
+)
 {
     return [&matrix] (size_t column) -> std::vector<T>
     {
-        std::function<std::vector<T> (size_t)> get_column_elements = [&matrix, column, &get_column_elements] (size_t row) -> std::vector<T>
+        std::function<std::vector<T> (size_t)> get_column_elements = 
+        [&matrix, column, &get_column_elements] (size_t row) -> 
+        std::vector<T>
         {
             if (row >= matrix.size()) { return std::vector<T>(); }
-            return std::vector<T>(1,matrix[row][column]) + get_column_elements(row+1);
+            return std::vector<T>(1,matrix[row][column]) + 
+            get_column_elements(row+1);
         };
         return get_column_elements(0);
     };
 }
 
 template <typename T>
-std::function<std::vector<std::vector<T>> (std::vector<std::vector<T>>)> matrix_multiply(const std::vector<std::vector<T>>& left)
+std::function<std::vector<std::vector<T>> (std::vector<std::vector<T>>)> 
+matrix_multiply(const std::vector<std::vector<T>>& left)
 {
     if (!std::is_arithmetic_v<T>)
     {
@@ -80,18 +93,60 @@ std::function<std::vector<std::vector<T>> (std::vector<std::vector<T>>)> matrix_
         {
             throw std::invalid_argument("Matrices are not multipliable.");
         }
-        std::function<std::vector<std::vector<T>> (size_t)> iterate_left_rows = [&left, &right, &iterate_left_rows] (size_t row) -> std::vector<std::vector<T>>
+        std::function<std::vector<std::vector<T>> (size_t)> iterate_left_rows =
+        [&left, &right, &iterate_left_rows] (size_t row) -> 
+        std::vector<std::vector<T>>
         {
             if (row == left.size()) { return {}; }
-            std::function<std::vector<T> (size_t)> iterate_right_columns = [&left, &right, row, &iterate_right_columns] (size_t column) -> std::vector<T>
+            std::function<std::vector<T> (size_t)> iterate_right_columns = 
+            [&left, &right, row, &iterate_right_columns] (size_t column) -> 
+            std::vector<T>
             {
                 if (column == right[0].size()) { return {}; }
-                return std::vector<T>(1,dot_product(get_matrix_row(left)(row))(get_matrix_column(right)(column))) + iterate_right_columns(column + 1);
+                return std::vector<T>(1,dot_product(
+                    get_matrix_row(left)(row)
+                )(
+                    get_matrix_column(right)(column)
+                )) + 
+                iterate_right_columns(column + 1);
             };
-            return std::vector<std::vector<T>>(1,iterate_right_columns(0)) + iterate_left_rows(row+1);
+            return std::vector<std::vector<T>>(1,iterate_right_columns(0)) +
+            iterate_left_rows(row+1);
         };
         return iterate_left_rows(0);
     };
+}
+
+std::vector<std::vector<int>> generate_nxn_identity(size_t n)
+{
+    std::function<std::vector<std::vector<int>> (size_t)> generate_rows =
+    [n, &generate_rows] (size_t row) -> std::vector<std::vector<int>>
+    {
+        if (row == n) { return {}; }
+
+        std::function<std::vector<int> (size_t)> generate_row =
+        [n, row, &generate_row] (size_t i) -> std::vector<int>
+        {
+            if (i == n) { return {}; }
+            return std::vector<int>(1, (i == row) ? 1 : 0) + generate_row(i + 1);
+        };
+        return std::vector<std::vector<int>>(1, generate_row(0)) + generate_rows(row + 1);
+    };
+    return generate_rows(0);
+}
+
+template <typename T>
+std::vector<std::vector<T>> add_multiple_of_row()
+{
+
+}
+
+template <typename T>
+std::vector<std::vector<T>> get_row_echelon_form(
+    const std::vector<std::vector<T>>& matrix
+)
+{
+
 }
 
 #endif
