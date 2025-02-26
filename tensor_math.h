@@ -87,7 +87,8 @@ matrix_multiply(const std::vector<std::vector<T>>& left)
     {
         throw std::invalid_argument("Parameter is not an arithmetic type.");
     }
-    return [&left] (const std::vector<std::vector<T>>& right)->std::vector<std::vector<T>>
+    return [&left] (const std::vector<std::vector<T>>& right) -> 
+    std::vector<std::vector<T>>
     {
         if (left[0].size() != right.size())
         {
@@ -128,12 +129,16 @@ std::vector<std::vector<int>> generate_nxn_identity(size_t n)
         [n, row, &generate_row] (size_t i) -> std::vector<int>
         {
             if (i == n) { return {}; }
-            return std::vector<int>(1, (i == row) ? 1 : 0) + generate_row(i + 1);
+            return std::vector<int>(1, (i == row) ? 1 : 0) + 
+            generate_row(i + 1);
         };
-        return std::vector<std::vector<int>>(1, generate_row(0)) + generate_rows(row + 1);
+        return std::vector<std::vector<int>>(1, generate_row(0)) + 
+        generate_rows(row + 1);
     };
     return generate_rows(0);
 }
+
+
 
 template <typename T>
 std::vector<std::vector<T>> add_multiple_of_row()
