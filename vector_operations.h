@@ -7,7 +7,6 @@
 #include<type_traits>
 
 template<typename T>
-// Not functional pattern and a hack fix because c++ hates me.
 std::vector<T> operator+(const std::vector<T>& v, const std::vector<T>& w)
 {
     std::vector<T> result(v);
