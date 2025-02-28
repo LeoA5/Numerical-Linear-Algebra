@@ -41,8 +41,11 @@ int main()
     const matrix<int> I_2 = generate_nxn_identity(2);
     display_matrix(I_2);
     const matrix<int> E_1 = replace_row(I_2)({2, 0})(0);
-    cout << "Matrix E_2: " << endl;
+    cout << "Matrix E_1: " << endl;
     display_matrix(E_1);
+    const matrix<int> E_2 = add_scaled_row(I_2)(2)(1)(0);
+    cout << "Matrix E_2: " << endl;
+    display_matrix(E_2);
     vector<int> v = {1, 2, 3};
     cout << "Vector v: " << endl;
     display_vector(v);

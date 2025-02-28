@@ -141,10 +141,36 @@ replace_row(const matrix<T>& A)
     };
 }
 
-template <typename T>
-const matrix<T> add_multiple_of_row()
-{
 
+// Elementary Row Operations
+template <typename T>
+std::function<std::function<std::function<const matrix<T>(size_t)>(size_t)>(T)>
+add_scaled_row(const matrix<T>& A)
+{
+    if (!std::is_arithmetic_v<T>)
+    {
+        throw std::invalid_argument("Scale factor type must be arithmetic.");
+    }
+    return [&A] (T scale_factor) -> 
+    std::function<std::function<const matrix<T> (size_t)> (size_t)>
+    {
+        return [&A, scale_factor] (size_t source_row) -> 
+        std::function<const matrix<T> (size_t)>
+        {
+            if (source_row >= A.shape[0])
+            {
+                throw std::invalid_argument("Source row index out of range.");
+            }
+            return [&A, scale_factor, source_row] (size_t destination_row) ->
+            const matrix<T>
+            {
+                return replace_row(A)(
+                    add(scale(A.elements[source_row])(scale_factor)
+                    )(A.elements[destination_row])
+                )(destination_row);
+            };
+        };
+    };
 }
 
 template <typename T>
