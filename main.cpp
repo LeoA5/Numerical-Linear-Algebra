@@ -16,6 +16,15 @@ void display_matrix(const matrix<T>& A)
     }
 }
 
+template<typename T>
+void display_vector(const vector<T>& v)
+{
+    for (size_t i = 0; i < v.size(); ++i)
+    {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
 
 int main()
 {
@@ -34,5 +43,14 @@ int main()
     const matrix<int> E_1 = replace_row(I_2)({2, 0})(0);
     cout << "Matrix E_2: " << endl;
     display_matrix(E_1);
+    vector<int> v = {1, 2, 3};
+    cout << "Vector v: " << endl;
+    display_vector(v);
+    vector<int> v_2 = scale(v)(2);
+    cout << "2v: " << endl;
+    display_vector(v_2);
+    vector<int> v_3 = add(v)(v_2);
+    cout <<"v + 2v = " << endl;
+    display_vector(v_3);
     return 0;
 }

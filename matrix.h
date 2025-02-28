@@ -46,6 +46,12 @@ std::function<std::vector<T> (size_t)> get_matrix_column(const matrix<T>& A)
 }
 
 template <typename T>
+const matrix<T> scalar_multiply(const matrix<T>& A)
+{
+
+}
+
+template <typename T>
 std::function<const matrix<T> (const matrix<T>&)> 
 matrix_multiply(const matrix<T>& left)
 {
@@ -95,10 +101,10 @@ const matrix<int> generate_nxn_identity(size_t n)
         [n, row, &generate_row] (size_t i) -> std::vector<int>
         {
             if (i == n) { return {}; }
-            return std::vector<int>(1, (i == row) ? 1 : 0) + 
+            return std::vector<int>{(i == row) ? 1 : 0} + 
             generate_row(i + 1);
         };
-        return std::vector<std::vector<int>>(1, generate_row(0)) + 
+        return std::vector<std::vector<int>>{generate_row(0)} + 
         generate_rows(row + 1);
     };
     return matrix<int> {{n, n}, {generate_rows(0)}};
@@ -111,7 +117,7 @@ replace_row(const matrix<T>& A)
     return [&A] (const std::vector<T>& new_row)
     {
         std::function<const matrix<T> (size_t)> replace_row =
-        [&A, &new_row] (size_t target_row)
+        [&A, &new_row] (size_t target_row) -> const matrix<T>
         {
             if (new_row.size() != A.shape[1])
             {
@@ -123,10 +129,10 @@ replace_row(const matrix<T>& A)
             }
             std::function<const std::vector<std::vector<T>> (size_t)>
             generate_new_row =
-            [&A, target_row, &new_row, &generate_new_row] (size_t row)
+            [&A, target_row, &new_row, &generate_new_row] (size_t row) -> const std::vector<std::vector<T>>
             {
                 if (row == A.shape[0]) { return std::vector<std::vector<T>>(); }
-                return std::vector<std::vector<T>>(1, (row == target_row ? new_row : A.elements[row])) +
+                return std::vector<std::vector<T>>{(row == target_row ? new_row : A.elements[row])} +
                 generate_new_row(row + 1);
             };
             return matrix<T> {{A.shape[0], A.shape[1]}, generate_new_row(0)};

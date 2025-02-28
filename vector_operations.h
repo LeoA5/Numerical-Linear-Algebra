@@ -44,4 +44,38 @@ std::function<T (const std::vector<T>&)> dot_product(
     };
 }
 
+template <typename T>
+std::function<std::vector<T> (T)> scale(const std::vector<T>& v)
+{
+    return [&v] (T scale_factor)
+    {
+        std::function<std::vector<T> (size_t)> scale_vector =
+        [&v, scale_factor, &scale_vector] (size_t row) -> std::vector<T>
+        {
+            if (row == v.size()) { return {}; }
+            return std::vector<T>{scale_factor * v[row]} + scale_vector(row + 1);
+        };
+        return scale_vector(0);
+    };
+}
+
+template <typename T>
+std::function<std::vector<T> (const std::vector<T>&)> add(const std::vector<T>& left)
+{
+    return [&left] (const std::vector<T>& right)
+    {
+        if (right.size() != left.size())
+        {
+            throw std::invalid_argument("Both vectors must be the same size.");
+        }
+        std::function<std::vector<T> (size_t)> add_vectors =
+        [&left, &right, &add_vectors] (size_t row) -> std::vector<T>
+        {
+            if (row == left.size()) { return {}; }
+            return std::vector<T> {left[row] + right[row]} + add_vectors(row + 1);
+        };
+        return add_vectors(0);
+    };
+}
+
 #endif
