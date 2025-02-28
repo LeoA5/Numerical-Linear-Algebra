@@ -1,41 +1,35 @@
-#include"tensor_math.h"
-#include<vector>
+#include "matrix.h"
 #include <iostream>
 
 using namespace std;
 
-int main()
+template<typename T>
+void display_matrix(const matrix<T>& A)
 {
-    vector<int> v = {1, 2, 3};
-    vector<int> w = {2, 5, 6};
-
-    cout << "v dot w = " << dot_product(v)(w) << endl;
-
-    vector<vector<int>> A = 
+    for (size_t row = 0; row < A.shape[0]; ++row)
     {
-        {1,2},
-        {3,4},
-        {5,6}
-    };
-    vector<vector<int>> B = 
-    {
-        {1,2,3},
-        {4,5,6}
-    };
-
-    vector<vector<int>> AB = generate_nxn_identity(2);
-
-    vector<int> A_one = get_matrix_column(A)(1);
-    size_t A_size = A_one.size();
-
-    for (size_t i = 0; i < AB.size(); ++i)
-    {
-        for (size_t j = 0; j < AB[0].size(); ++j)
+        for (size_t col = 0; col < A.shape[1]; ++col)
         {
-            cout << AB[i][j] << " ";
+            cout << A.elements[row][col] << " ";
         }
         cout << endl;
     }
+}
 
+
+int main()
+{
+    const matrix<int> A = {{2,3}, {{1,2,3}, {4,5,6}}};
+    const matrix<int> B = {{3,2}, {{1,2}, {3,4}, {5,6}}};
+    const matrix<int> AB = matrix_multiply(A)(B);
+    cout << "Matrix A: " << endl;
+    display_matrix(A);
+    cout << "Matrix B: " << endl;
+    display_matrix(B);
+    cout << "Matrix AB: " << endl;
+    display_matrix(AB);
+    cout << "Matrix I_2: " << endl;
+    const matrix<int> I_2 = generate_nxn_identity(2);
+    display_matrix(I_2);
     return 0;
 }
