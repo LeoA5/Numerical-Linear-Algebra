@@ -80,7 +80,7 @@ matrix_multiply(const matrix<T>& left)
             iterate_left_rows(row+1);
         };
 
-        return {{left.shape[0], right.shape[1]}, iterate_left_rows(0)};
+        return matrix<T> {{left.shape[0], right.shape[1]}, iterate_left_rows(0)};
     };
 }
 
@@ -101,43 +101,35 @@ const matrix<int> generate_nxn_identity(size_t n)
         return std::vector<std::vector<int>>(1, generate_row(0)) + 
         generate_rows(row + 1);
     };
-    return {{n, n}, {generate_rows(0)}};
+    return matrix<int> {{n, n}, {generate_rows(0)}};
 }
 
 template<typename T>
-std::function<std::function<const matrix<T> (const std::vector<T>&)> (size_t)>
+std::function<std::function<const matrix<T> (size_t)> (const std::vector<T>&)>
 replace_row(const matrix<T>& A)
 {
-    return [&A] (size_t target_row)
+    return [&A] (const std::vector<T>& new_row)
     {
-        std::function<const matrix<T> (const std::vector<T>&) replace_row = 
-        [&A, target_row] (const std::vector<T>& new_row)
+        std::function<const matrix<T> (size_t)> replace_row =
+        [&A, &new_row] (size_t target_row)
         {
             if (new_row.size() != A.shape[1])
             {
-                throw std::invalid_argument
-                (
-                    "New row is an inappropriate size."
-                );
+                throw std::invalid_argument("New row is an inappropriate size.");
             }
             if (target_row > A.shape[0])
             {
-                throw std::invalid_argument
-                (
-                    "Target row index out of range";
-                );
+                throw std::invalid_argument("Target row index out of range");
             }
             std::function<const std::vector<std::vector<T>> (size_t)>
             generate_new_row =
             [&A, target_row, &new_row, &generate_new_row] (size_t row)
             {
-                if (row == A.shape[0]) { return {}; }
-                return std::vector(
-                    1, row == target_row ? new_row, A.elements[row]
-                ) +
+                if (row == A.shape[0]) { return std::vector<std::vector<T>>(); }
+                return std::vector<std::vector<T>>(1, (row == target_row ? new_row : A.elements[row])) +
                 generate_new_row(row + 1);
             };
-            return {{A.shape[0] A.shape[1]}, {generate_new_row(0)}};
+            return matrix<T> {{A.shape[0], A.shape[1]}, generate_new_row(0)};
         };
         return replace_row;
     };

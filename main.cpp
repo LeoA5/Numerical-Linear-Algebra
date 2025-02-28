@@ -31,5 +31,8 @@ int main()
     cout << "Matrix I_2: " << endl;
     const matrix<int> I_2 = generate_nxn_identity(2);
     display_matrix(I_2);
+    const matrix<int> E_1 = replace_row(I_2)({2, 0})(0);
+    cout << "Matrix E_2: " << endl;
+    display_matrix(E_1);
     return 0;
 }
