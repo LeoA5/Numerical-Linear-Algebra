@@ -53,14 +53,16 @@ std::function<std::vector<T> (T)> scale(const std::vector<T>& v)
         [&v, scale_factor, &scale_vector] (size_t row) -> std::vector<T>
         {
             if (row == v.size()) { return {}; }
-            return std::vector<T>{scale_factor * v[row]} + scale_vector(row + 1);
+            return std::vector<T>{scale_factor * v[row]} + 
+            scale_vector(row + 1);
         };
         return scale_vector(0);
     };
 }
 
 template <typename T>
-std::function<std::vector<T> (const std::vector<T>&)> add(const std::vector<T>& left)
+std::function<std::vector<T> (const std::vector<T>&)> 
+add(const std::vector<T>& left)
 {
     return [&left] (const std::vector<T>& right)
     {

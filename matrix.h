@@ -86,7 +86,8 @@ matrix_multiply(const matrix<T>& left)
             iterate_left_rows(row+1);
         };
 
-        return matrix<T> {{left.shape[0], right.shape[1]}, iterate_left_rows(0)};
+        return matrix<T> {{left.shape[0], right.shape[1]}, 
+        iterate_left_rows(0)};
     };
 }
 
@@ -121,18 +122,25 @@ replace_row(const matrix<T>& A)
         {
             if (new_row.size() != A.shape[1])
             {
-                throw std::invalid_argument("New row is an inappropriate size.");
+                throw std::invalid_argument(
+                    "New row is an inappropriate size."
+                );
             }
             if (target_row > A.shape[0])
             {
-                throw std::invalid_argument("Target row index out of range");
+                throw std::invalid_argument(
+                    "Target row index out of range"
+                );
             }
             std::function<const std::vector<std::vector<T>> (size_t)>
             generate_new_row =
-            [&A, target_row, &new_row, &generate_new_row] (size_t row) -> const std::vector<std::vector<T>>
+            [&A, target_row, &new_row, &generate_new_row] (size_t row) -> 
+            const std::vector<std::vector<T>>
             {
-                if (row == A.shape[0]) { return std::vector<std::vector<T>>(); }
-                return std::vector<std::vector<T>>{(row == target_row ? new_row : A.elements[row])} +
+                if (row == A.shape[0]) { return {}; }
+                return std::vector<std::vector<T>>{(
+                    row == target_row ? new_row : A.elements[row]
+                )} +
                 generate_new_row(row + 1);
             };
             return matrix<T> {{A.shape[0], A.shape[1]}, generate_new_row(0)};
