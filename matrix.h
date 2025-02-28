@@ -38,7 +38,8 @@ std::function<std::vector<T> (size_t)> get_matrix_column(const matrix<T>& A)
         std::vector<T>
         {
             if (row >= A.shape[0]) { return {}; }
-            return std::vector<T>(1,A.elements[row][column]) + get_column_elements(row+1);
+            return std::vector<T>(1,A.elements[row][column]) + 
+            get_column_elements(row+1);
         };
         return get_column_elements(0);
     };
@@ -103,16 +104,66 @@ const matrix<int> generate_nxn_identity(size_t n)
     return {{n, n}, {generate_rows(0)}};
 }
 
-
+template<typename T>
+std::function<std::function<const matrix<T> (const std::vector<T>&)> (size_t)>
+replace_row(const matrix<T>& A)
+{
+    return [&A] (size_t target_row)
+    {
+        std::function<const matrix<T> (const std::vector<T>&) replace_row = 
+        [&A, target_row] (const std::vector<T>& new_row)
+        {
+            if (new_row.size() != A.shape[1])
+            {
+                throw std::invalid_argument
+                (
+                    "New row is an inappropriate size."
+                );
+            }
+            if (target_row > A.shape[0])
+            {
+                throw std::invalid_argument
+                (
+                    "Target row index out of range";
+                );
+            }
+            std::function<const std::vector<std::vector<T>> (size_t)>
+            generate_new_row =
+            [&A, target_row, &new_row, &generate_new_row] (size_t row)
+            {
+                if (row == A.shape[0]) { return {}; }
+                return std::vector(
+                    1, row == target_row ? new_row, A.elements[row]
+                ) +
+                generate_new_row(row + 1);
+            };
+            return {{A.shape[0] A.shape[1]}, {generate_new_row(0)}};
+        };
+        return replace_row;
+    };
+}
 
 template <typename T>
-std::vector<std::vector<T>> add_multiple_of_row()
+const matrix<T> add_multiple_of_row()
 {
 
 }
 
 template <typename T>
-std::vector<std::vector<T>> get_row_echelon_form(
+const matrix<T> interchange_rows()
+{
+
+}
+
+template <typename T>
+const matrix<T> scale_rows(const matrix<T>& A)
+{
+    // generate elementary matrix with scale op
+
+}
+
+template <typename T>
+const matrix<T> get_row_echelon_form(
     const std::vector<std::vector<T>>& matrix
 )
 {
