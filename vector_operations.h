@@ -50,7 +50,7 @@ std::function<std::vector<T> (T)> scale(const std::vector<T>& v)
     {
         throw std::invalid_argument("Template type T must be arithmetic.");
     }
-    return [&v] (T scale_factor)
+    return [&v] (T scale_factor) -> std::vector<T>
     {
         std::function<std::vector<T> (size_t)> scale_vector =
         [&v, scale_factor, &scale_vector] (size_t row) -> std::vector<T>
@@ -67,7 +67,7 @@ template <typename T>
 std::function<std::vector<T> (const std::vector<T>&)> 
 add(const std::vector<T>& left)
 {
-    return [&left] (const std::vector<T>& right)
+    return [&left] (const std::vector<T>& right) -> std::vector<T>
     {
         if (right.size() != left.size())
         {
@@ -77,7 +77,8 @@ add(const std::vector<T>& left)
         [&left, &right, &add_vectors] (size_t row) -> std::vector<T>
         {
             if (row == left.size()) { return {}; }
-            return std::vector<T> {left[row] + right[row]} + add_vectors(row + 1);
+            return std::vector<T> {left[row] + right[row]} + 
+            add_vectors(row + 1);
         };
         return add_vectors(0);
     };
