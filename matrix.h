@@ -38,7 +38,7 @@ std::function<std::vector<T> (size_t)> get_matrix_column(const matrix<T>& A)
         std::vector<T>
         {
             if (row >= A.shape[0]) { return {}; }
-            return std::vector<T>(1,A.elements[row][column]) + 
+            return std::vector<T>{A.elements[row][column]} + 
             get_column_elements(row+1);
         };
         return get_column_elements(0);
@@ -46,9 +46,23 @@ std::function<std::vector<T> (size_t)> get_matrix_column(const matrix<T>& A)
 }
 
 template <typename T>
-const matrix<T> scalar_multiply(const matrix<T>& A)
+std::function<const matrix<T> (T)> scalar_multiply(const matrix<T>& A)
 {
-
+    return [&A] (T scale_factor) -> const matrix<T>
+    {
+        std::function<std::vector<std::vector<T>> (size_t)> scale_matrix =
+        [&A, scale_factor, &scale_matrix] (size_t row) -> 
+        std::vector<std::vector<T>>
+        {
+            if (row == A.shape[0]) { return {}; }
+            return std::vector<std::vector<T>> {
+                scale(A.elements[row])(scale_factor) 
+            } + scale_matrix(row + 1);
+        };
+        return matrix<T> {
+            {A.shape[0], A.shape[1]}, {scale_matrix(0)}
+        };
+    };
 }
 
 template <typename T>

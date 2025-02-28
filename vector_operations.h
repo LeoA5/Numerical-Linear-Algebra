@@ -47,6 +47,10 @@ std::function<T (const std::vector<T>&)> dot_product(
 template <typename T>
 std::function<std::vector<T> (T)> scale(const std::vector<T>& v)
 {
+    if (!std::is_arithmetic_v<T>)
+    {
+        throw std::invalid_argument("Template type T must be arithmetic.");
+    }
     return [&v] (T scale_factor)
     {
         std::function<std::vector<T> (size_t)> scale_vector =

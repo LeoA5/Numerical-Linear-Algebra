@@ -37,6 +37,9 @@ int main()
     display_matrix(B);
     cout << "Matrix AB: " << endl;
     display_matrix(AB);
+    const matrix<int> AB_2 = scalar_multiply(AB)(2);
+    cout << "2AB: " << endl;
+    display_matrix(AB_2);
     cout << "Matrix I_2: " << endl;
     const matrix<int> I_2 = generate_nxn_identity(2);
     display_matrix(I_2);
